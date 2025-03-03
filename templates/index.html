@@ -1,13 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Subir Excel</title>
+    <link rel="stylesheet" href="static/style.css">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Excel File</title>
 </head>
 <body>
-    <h2>Subir archivo Excel</h2>
-    <form action="/" method="post" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <input type="submit" value="Subir y Transformar">
-    </form>
+    <h1> Splunk query transformer </h1>
+    
+    <div class="container">
+        <h3>Select the type of query</h3>
+        <select name="query type" multiple>
+            <option value="tps">TPS</option>
+            <option value="tpd">TPD</option>
+      </select>
+        
+    </div>
+    
+    
+    <div class="container">
+        <h3>Select the file</h3>
+        <input type="file" id="fileInput" accept=".xlsx, .xls">
+    </div>
+    
+    
+    <div class="container">
+        <h3>Query Splunk to get TPS</h3>
+        <div class="code-snippet" id="codeSnippet">
+            fetch('/data-endpoint').then(res => res.json()).then(data => console.log(data));
+            <button class="copy-btn" onclick="copyCode()">
+                <img src="https://cdn-icons-png.flaticon.com/512/60/60990.png" alt="Copiar">
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        function copyCode() {
+            const code = document.getElementById("codeSnippet").innerText;
+            navigator.clipboard.writeText(code).then(() => alert("Código copiado!"));
+        }
+    </script>
+
+<div class="container">
+    <h3>Query Splunk to get TPD</h3>
+    <div class="code-snippet" id="codeSnippetTPD">
+        index=n* layer=caas component="*" env-name=prod  logpoint=request-in   service != "" 
+        | eval _time =strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%3N")
+        | timechart span=1d count as tpd by component
+        | sort _time
+        <button class="copy-btn" onclick="copyCodeTPD()">
+            <img src="https://cdn-icons-png.flaticon.com/512/60/60990.png" alt="Copiar">
+        </button>
+    </div>
+</div>
+
+<script>
+    function copyCodeTPD() {
+        const code = document.getElementById("codeSnippetTPD").innerText;
+        navigator.clipboard.writeText(code).then(() => alert("Copied to clipboard!"));
+    }
+</script>
+
+
+
+
 </body>
 </html>
