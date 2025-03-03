@@ -33,17 +33,22 @@
     
     <div class="container">
         <h3>Splunk Query to get TPS</h3>
-        <div class="code-snippet" id="codeSnippet">
-            fetch('/data-endpoint').then(res => res.json()).then(data => console.log(data));
-            <button class="copy-btn" onclick="copyCode()">
+        <div class="code-snippet" id="codeSnippetTPS">
+            index=n* layer=caas component="*" env-name=prod logpoint=request-in service != ""  
+            | eval _time = strptime(timestamp, "%Y-%m-%dT%H:%M:%S")  
+            | bucket _time span=1s  
+            | stats count as TPS by _time, component  
+            | timechart span=1d max(TPS) as peakTPS by component
+            | sort _time
+            <button class="copy-btn" onclick="copyCodeTPS()">
                 <img src="https://cdn-icons-png.flaticon.com/512/60/60990.png" alt="Copiar">
             </button>
         </div>
     </div>
     
     <script>
-        function copyCode() {
-            const code = document.getElementById("codeSnippet").innerText;
+        function copyCodeTPS() {
+            const code = document.getElementById("codeSnippetTPS").innerText;
             navigator.clipboard.writeText(code).then(() => alert("Código copiado!"));
         }
     </script>
