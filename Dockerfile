@@ -8,6 +8,7 @@ WORKDIR /app
 COPY requirements.txt .
 COPY app.py .
 COPY templates/ templates/
+COPY static/ static/
 
 # Instalar las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
