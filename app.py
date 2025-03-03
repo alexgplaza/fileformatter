@@ -9,7 +9,7 @@ OUTPUT_FOLDER = "outputs"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-def transform_file(input_path, output_path):
+def transform_file(input_path, output_path, dropdown_value):
     # Detectar si es CSV o Excel
     if input_path.endswith('.csv'):
         df = pd.read_csv(input_path)
@@ -17,12 +17,17 @@ def transform_file(input_path, output_path):
         df = pd.read_excel(input_path)
 
     df_melted = df.melt(id_vars=['_time'], var_name='metric', value_name='value')
+
+    # insertamos la nueva columna en la segunda posicion
+    df_melted.insert(1, 'Type', [dropdown_value] * len(df_melted))
+
     df_melted.to_csv(output_path, index=False)
 
 @app.route("/", methods=["GET", "POST"])
 def upload_file():
     if request.method == "POST":
         file = request.files["file"]
+        dropdown_value = request.form["dropdown_value"] 
         if file.filename == "":
             return "No selected file"
 
@@ -34,7 +39,7 @@ def upload_file():
         output_path = os.path.join(OUTPUT_FOLDER, "transformed_" + file.filename)
 
         file.save(file_path)
-        transform_file(file_path, output_path)
+        transform_file(file_path, output_path, dropdown_value)
 
         return send_file(output_path, as_attachment=True)
 

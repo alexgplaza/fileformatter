@@ -2,7 +2,6 @@
 <html>
 <head>
     <link rel="stylesheet" href="static/style.css">
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Excel File</title>
@@ -10,24 +9,30 @@
 <body>
     <h1> Splunk query transformer </h1>
     
-    <div class="container">
-        <h3>Select the type of query</h3>
-        <select name="query type" multiple>
-            <option value="tps">TPS</option>
-            <option value="tpd">TPD</option>
-      </select>
-        
-    </div>
     
     
-    <div class="container">
+   <div class="container">
         <h3>Select the file</h3>
-        <input type="file" id="fileInput" accept=".xlsx, .xls">
+        <form action="/" method="post" enctype="multipart/form-data">
+            <input type="file" name="file">
+            
+            <label for="dropdown">query type</label>
+            <select name="dropdown_value" id="dropdown">
+                <option value="tps">tps</option>
+                <option value="tpd">tpd</option>
+            </select>
+        
+            <input type="submit" value="submit">
+        </form>
     </div>
+
+
+    
+    
     
     
     <div class="container">
-        <h3>Query Splunk to get TPS</h3>
+        <h3>Splunk Query to get TPS</h3>
         <div class="code-snippet" id="codeSnippet">
             fetch('/data-endpoint').then(res => res.json()).then(data => console.log(data));
             <button class="copy-btn" onclick="copyCode()">
@@ -44,7 +49,7 @@
     </script>
 
 <div class="container">
-    <h3>Query Splunk to get TPD</h3>
+    <h3>Splunk Query to get TPD</h3>
     <div class="code-snippet" id="codeSnippetTPD">
         index=n* layer=caas component="*" env-name=prod  logpoint=request-in   service != "" 
         | eval _time =strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%3N")
